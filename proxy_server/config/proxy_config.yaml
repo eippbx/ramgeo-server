@@ -1,0 +1,76 @@
+# 代理服务器配置
+rest_api:
+  host: "0.0.0.0"  # 代理服务器监听主机
+  port: 8080       # 代理服务器监听端口
+  debug: true     # 调试模式
+  log_level: "INFO"  # 日志级别
+  metrics_port: 8090  # 指标监控端口
+
+# WebSocket 配置
+websocket:
+  host: "0.0.0.0"  # WebSocket 监听主机
+  port: 8765  # WebSocket 监听端口
+  heartbeat_interval: 30  # 心跳间隔（秒）
+  heartbeat_timeout: 30  # 心跳超时（秒）
+  max_message_size: 104857600  # 最大消息大小（100MB）
+  max_connections: 1000  # 最大连接数
+
+# 节点管理配置
+node:
+  max_cpu: 0.90  # 节点最大CPU占用率
+  max_memory: 0.90  # 节点最大内存占用率  
+  max_disk: 0.90  # 节点最大磁盘占用率
+  work_dir: "./uploads"  # 工作目录
+  health_check_interval: 30  # 健康检查间隔（秒）
+  max_failures: 3  # 最大失败次数
+  max_retries: 5  # 最大重试次数
+  retry_delay: 5  # 重试延迟（秒）
+
+# 负载均衡配置
+load_balancing:
+  strategy: "RANDOM"  # 负载均衡策略 RANDOM 随机选择节点/LEAST_CONNECTIONS 最少连接数/ROUND_ROBIN 轮询/WEIGHTED_ROUND_ROBIN 加权轮询/WEIGHTED_LEAST_CONNECTIONS 加权最少连接数
+  weights: {}  # 节点权重配置
+  affinity_timeout: 300  # 亲和性超时（秒）
+
+# 文件传输配置
+file_transfer:
+  chunk_size: 1048576  # 分片大小（1MB）
+  compression: false  # 是否压缩
+  encryption: false  # 是否加密
+  temp_dir: "./tmp"  # 临时目录
+  retention_days: 7  # 文件保留天数（已废弃，请使用 cleanup_time）
+  cleanup_time: 7  # 文件保留天数（天）
+  cleanup_interval: 86400  # 文件清理间隔（秒，默认为 24 小时）
+
+# 数据库配置
+database:
+  host: "localhost"  # 数据库主机
+  port: 3306  # 数据库端口
+  name: "ramgeo"  # 数据库名称
+  user: "root"  # 数据库用户
+  password: "Pga39016"  # 数据库密码
+  pool_size: 10  # 连接池大小
+  max_overflow: 20  # 最大溢出连接数
+  echo: false  # 是否输出SQL语句
+
+# Redis 配置
+redis:
+  host: "localhost"  # Redis主机
+  port: 6379  # Redis端口
+  password: null  # Redis密码
+  db: 0  # Redis数据库
+  max_connections: 20  # 最大连接数
+  decode_responses: true  # 是否解码响应
+
+# 监控配置
+monitoring:
+  enabled: false  # 是否启用监控
+  metrics_interval: 10  # 指标收集间隔（秒）
+  alerting:
+    enabled: false  # 是否启用告警
+    webhook_url: null  # 告警Webhook URL
+  logging:
+    level: "debug"  # 日志级别
+    rotation:
+      size: "100MB"  # 日志文件大小
+      backup_count: 10  # 备份数量

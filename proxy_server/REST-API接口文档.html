@@ -1,0 +1,941 @@
+<h1><a name="REST API 接口文档"></a><span></span>REST API 接口文档</h1>
+<h2><a name="1. 概述"></a><span></span>1. 概述</h2>
+<p>本文档详细描述了 RAMGEO 代理服务器的 REST API 接口规范。所有接口均采用 RESTful 架构设计，使用 JSON 格式进行数据交换。</p>
+<h3><a name="1.1 基础信息"></a><span></span>1.1 基础信息</h3>
+<ul>
+    <li><strong>基础URL</strong>: <code>http://&lt;host&gt;:&lt;port&gt;/api/v1</code></li>
+    <li><strong>协议</strong>: HTTP/1.1</li>
+    <li><strong>数据格式</strong>: JSON</li>
+    <li><strong>字符编码</strong>: UTF-8</li>
+</ul>
+<h3><a name="1.2 通用响应格式"></a><span></span>1.2 通用响应格式</h3>
+<p>所有接口返回的响应都遵循以下格式：</p>
+<h4><a name="成功响应"></a><span></span>成功响应</h4>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"data"</span><span>:</span><span> </span><span>{},</span></code></li><li><code><span>  </span><span>"message"</span><span>:</span><span> </span><span>"Success"</span><span>,</span></code></li><li><code><span>  </span><span>"timestamp"</span><span>:</span><span> </span><span>"2023-01-01T12:00:00Z"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<h4><a name="错误响应"></a><span></span>错误响应</h4>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"detail"</span><span>:</span><span> </span><span>"Error message"</span><span>,</span></code></li><li><code><span>  </span><span>"timestamp"</span><span>:</span><span> </span><span>"2023-01-01T12:00:00Z"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<h3><a name="1.3 HTTP 状态码"></a><span></span>1.3 HTTP 状态码</h3>
+<table>
+    <thead>
+        <tr>
+            <th>状态码</th>
+            <th>描述</th>
+            <th>使用场景</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>200</td>
+            <td>OK</td>
+            <td>请求成功</td>
+        </tr>
+        <tr>
+            <td>400</td>
+            <td>Bad Request</td>
+            <td>请求参数错误</td>
+        </tr>
+        <tr>
+            <td>404</td>
+            <td>Not Found</td>
+            <td>资源不存在</td>
+        </tr>
+        <tr>
+            <td>500</td>
+            <td>Internal Server Error</td>
+            <td>服务器内部错误</td>
+        </tr>
+    </tbody>
+</table>
+<h3><a name="1.4 认证"></a><span></span>1.4 认证</h3>
+<p>当前版本不需要认证，所有接口均可直接访问。</p>
+<h2><a name="2. 系统状态接口"></a><span></span>2. 系统状态接口</h2>
+<h3><a name="2.1 获取系统状态"></a><span></span>2.1 获取系统状态</h3>
+<p>获取代理服务器的运行状态。</p>
+<p><strong>Endpoint</strong>: <code>GET /api/v1/status</code></p>
+<p><strong>请求参数</strong>: 无</p>
+<p><strong>响应示例</strong>:</p>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"status"</span><span>:</span><span> </span><span>"ok"</span><span>,</span></code></li><li><code><span>  </span><span>"timestamp"</span><span>:</span><span> </span><span>"2023-01-01T12:00:00Z"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<p><strong>字段说明</strong>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>字段名</th>
+            <th>类型</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>status</td>
+            <td>string</td>
+            <td>系统状态，”ok” 表示正常</td>
+        </tr>
+        <tr>
+            <td>timestamp</td>
+            <td>string</td>
+            <td>响应时间戳（ISO 8601格式）</td>
+        </tr>
+    </tbody>
+</table>
+<h2><a name="3. 节点管理接口"></a><span></span>3. 节点管理接口</h2>
+<h3><a name="3.1 获取所有节点列表"></a><span></span>3.1 获取所有节点列表</h3>
+<p>获取所有注册节点的信息列表。</p>
+<p><strong>Endpoint</strong>: <code>GET /api/v1/nodes</code></p>
+<p><strong>请求参数</strong>: 无</p>
+<p><strong>响应示例</strong>:</p>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"nodes"</span><span>:</span><span> </span><span>[</span></code></li><li><code><span>    </span><span>{</span></code></li><li><code><span>      </span><span>"node_id"</span><span>:</span><span> </span><span>"node-001"</span><span>,</span></code></li><li><code><span>      </span><span>"node_name"</span><span>:</span><span> </span><span>"Node Server 001"</span><span>,</span></code></li><li><code><span>      </span><span>"status"</span><span>:</span><span> </span><span>"HEALTHY"</span><span>,</span></code></li><li><code><span>      </span><span>"capabilities"</span><span>:</span><span> </span><span>{</span></code></li><li><code><span>        </span><span>"cpu_count"</span><span>:</span><span> </span><span>4</span><span>,</span></code></li><li><code><span>        </span><span>"memory_gb"</span><span>:</span><span> </span><span>16</span><span>,</span></code></li><li><code><span>        </span><span>"disk_gb"</span><span>:</span><span> </span><span>100</span></code></li><li><code><span>      </span><span>},</span></code></li><li><code><span>      </span><span>"load"</span><span>:</span><span> </span><span>{</span></code></li><li><code><span>        </span><span>"cpu_usage"</span><span>:</span><span> </span><span>0.45</span><span>,</span></code></li><li><code><span>        </span><span>"memory_usage"</span><span>:</span><span> </span><span>0.6</span><span>,</span></code></li><li><code><span>        </span><span>"disk_usage"</span><span>:</span><span> </span><span>0.75</span></code></li><li><code><span>      </span><span>},</span></code></li><li><code><span>      </span><span>"active_tasks"</span><span>:</span><span> </span><span>2</span><span>,</span></code></li><li><code><span>      </span><span>"last_heartbeat"</span><span>:</span><span> </span><span>"2023-01-01T12:00:00Z"</span><span>,</span></code></li><li><code><span>      </span><span>"ip_address"</span><span>:</span><span> </span><span>"192.168.1.100"</span></code></li><li><code><span>    </span><span>}</span></code></li><li><code><span>  </span><span>],</span></code></li><li><code><span>  </span><span>"total"</span><span>:</span><span> </span><span>1</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<p><strong>字段说明</strong>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>字段名</th>
+            <th>类型</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>nodes</td>
+            <td>array</td>
+            <td>节点信息数组</td>
+        </tr>
+        <tr>
+            <td>total</td>
+            <td>integer</td>
+            <td>节点总数</td>
+        </tr>
+    </tbody>
+</table>
+<p><strong>节点信息字段说明</strong>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>字段名</th>
+            <th>类型</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>node_id</td>
+            <td>string</td>
+            <td>节点唯一标识符</td>
+        </tr>
+        <tr>
+            <td>node_name</td>
+            <td>string</td>
+            <td>节点名称</td>
+        </tr>
+        <tr>
+            <td>status</td>
+            <td>string</td>
+            <td>节点状态（UNKNOWN/CONNECTING/CONNECTED/HEALTHY/UNHEALTHY/BUSY/IDLE/OFFLINE/DRAINING）</td>
+        </tr>
+        <tr>
+            <td>capabilities</td>
+            <td>object</td>
+            <td>节点能力信息</td>
+        </tr>
+        <tr>
+            <td>capabilities.cpu_count</td>
+            <td>integer</td>
+            <td>CPU 核心数</td>
+        </tr>
+        <tr>
+            <td>capabilities.memory_gb</td>
+            <td>number</td>
+            <td>内存大小（GB）</td>
+        </tr>
+        <tr>
+            <td>capabilities.disk_gb</td>
+            <td>number</td>
+            <td>磁盘大小（GB）</td>
+        </tr>
+        <tr>
+            <td>load</td>
+            <td>object</td>
+            <td>节点负载信息</td>
+        </tr>
+        <tr>
+            <td>load.cpu_usage</td>
+            <td>number</td>
+            <td>CPU 使用率（0-1）</td>
+        </tr>
+        <tr>
+            <td>load.memory_usage</td>
+            <td>number</td>
+            <td>内存使用率（0-1）</td>
+        </tr>
+        <tr>
+            <td>load.disk_usage</td>
+            <td>number</td>
+            <td>磁盘使用率（0-1）</td>
+        </tr>
+        <tr>
+            <td>active_tasks</td>
+            <td>integer</td>
+            <td>当前活动任务数</td>
+        </tr>
+        <tr>
+            <td>last_heartbeat</td>
+            <td>string</td>
+            <td>最后心跳时间（ISO 8601格式）</td>
+        </tr>
+        <tr>
+            <td>ip_address</td>
+            <td>string</td>
+            <td>节点 IP 地址</td>
+        </tr>
+    </tbody>
+</table>
+<h3><a name="3.2 获取单个节点信息"></a><span></span>3.2 获取单个节点信息</h3>
+<p>获取指定节点的详细信息。</p>
+<p><strong>Endpoint</strong>: <code>GET /api/v1/nodes/{node_id}</code></p>
+<p><strong>路径参数</strong>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>参数名</th>
+            <th>类型</th>
+            <th>必选</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>node_id</td>
+            <td>string</td>
+            <td>是</td>
+            <td>节点唯一标识符</td>
+        </tr>
+    </tbody>
+</table>
+<p><strong>响应示例</strong>:</p>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"node_id"</span><span>:</span><span> </span><span>"node-001"</span><span>,</span></code></li><li><code><span>  </span><span>"node_name"</span><span>:</span><span> </span><span>"Node Server 001"</span><span>,</span></code></li><li><code><span>  </span><span>"status"</span><span>:</span><span> </span><span>"HEALTHY"</span><span>,</span></code></li><li><code><span>  </span><span>"capabilities"</span><span>:</span><span> </span><span>{</span></code></li><li><code><span>    </span><span>"cpu_count"</span><span>:</span><span> </span><span>4</span><span>,</span></code></li><li><code><span>    </span><span>"memory_gb"</span><span>:</span><span> </span><span>16</span><span>,</span></code></li><li><code><span>    </span><span>"disk_gb"</span><span>:</span><span> </span><span>100</span></code></li><li><code><span>  </span><span>},</span></code></li><li><code><span>  </span><span>"load"</span><span>:</span><span> </span><span>{</span></code></li><li><code><span>    </span><span>"cpu_usage"</span><span>:</span><span> </span><span>0.45</span><span>,</span></code></li><li><code><span>    </span><span>"memory_usage"</span><span>:</span><span> </span><span>0.6</span><span>,</span></code></li><li><code><span>    </span><span>"disk_usage"</span><span>:</span><span> </span><span>0.75</span></code></li><li><code><span>  </span><span>},</span></code></li><li><code><span>  </span><span>"active_tasks"</span><span>:</span><span> </span><span>2</span><span>,</span></code></li><li><code><span>  </span><span>"last_heartbeat"</span><span>:</span><span> </span><span>"2023-01-01T12:00:00Z"</span><span>,</span></code></li><li><code><span>  </span><span>"ip_address"</span><span>:</span><span> </span><span>"192.168.1.100"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<p><strong>字段说明</strong>: 同 3.1 节点信息字段说明</p>
+<p><strong>错误响应</strong>:</p>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"detail"</span><span>:</span><span> </span><span>"Node node-001 not found"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<h3><a name="3.3 排空节点"></a><span></span>3.3 排空节点</h3>
+<p>将节点设置为排空状态，不再接收新任务，但继续执行现有任务。</p>
+<p><strong>Endpoint</strong>: <code>POST /api/v1/nodes/{node_id}/drain</code></p>
+<p><strong>路径参数</strong>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>参数名</th>
+            <th>类型</th>
+            <th>必选</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>node_id</td>
+            <td>string</td>
+            <td>是</td>
+            <td>节点唯一标识符</td>
+        </tr>
+    </tbody>
+</table>
+<p><strong>响应示例</strong>:</p>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"node_id"</span><span>:</span><span> </span><span>"node-001"</span><span>,</span></code></li><li><code><span>  </span><span>"action"</span><span>:</span><span> </span><span>"drain"</span><span>,</span></code></li><li><code><span>  </span><span>"status"</span><span>:</span><span> </span><span>"success"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<p><strong>字段说明</strong>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>字段名</th>
+            <th>类型</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>node_id</td>
+            <td>string</td>
+            <td>节点唯一标识符</td>
+        </tr>
+        <tr>
+            <td>action</td>
+            <td>string</td>
+            <td>执行的操作</td>
+        </tr>
+        <tr>
+            <td>status</td>
+            <td>string</td>
+            <td>操作状态</td>
+        </tr>
+    </tbody>
+</table>
+<p><strong>错误响应</strong>:</p>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"detail"</span><span>:</span><span> </span><span>"Node node-001 not found"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<h3><a name="3.4 激活节点"></a><span></span>3.4 激活节点</h3>
+<p>将节点从排空状态恢复为正常状态，开始接收新任务。</p>
+<p><strong>Endpoint</strong>: <code>POST /api/v1/nodes/{node_id}/activate</code></p>
+<p><strong>路径参数</strong>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>参数名</th>
+            <th>类型</th>
+            <th>必选</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>node_id</td>
+            <td>string</td>
+            <td>是</td>
+            <td>节点唯一标识符</td>
+        </tr>
+    </tbody>
+</table>
+<p><strong>响应示例</strong>:</p>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"node_id"</span><span>:</span><span> </span><span>"node-001"</span><span>,</span></code></li><li><code><span>  </span><span>"action"</span><span>:</span><span> </span><span>"activate"</span><span>,</span></code></li><li><code><span>  </span><span>"status"</span><span>:</span><span> </span><span>"success"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<p><strong>字段说明</strong>: 同 3.3</p>
+<p><strong>错误响应</strong>: 同 3.3</p>
+<h2><a name="4. 任务管理接口"></a><span></span>4. 任务管理接口</h2>
+<h3><a name="4.1 上传任务文件"></a><span></span>4.1 上传任务文件</h3>
+<p>上传任务文件并创建新任务。</p>
+<p><strong>Endpoint</strong>: <code>POST /api/v1/tasks/upload</code></p>
+<p><strong>请求参数</strong>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>参数名</th>
+            <th>类型</th>
+            <th>必选</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>task_type</td>
+            <td>string</td>
+            <td>是</td>
+            <td>任务类型（查询参数）</td>
+        </tr>
+        <tr>
+            <td>file</td>
+            <td>file</td>
+            <td>是</td>
+            <td>任务输入文件（表单数据）</td>
+        </tr>
+        <tr>
+            <td>chunk_index</td>
+            <td>integer</td>
+            <td>否</td>
+            <td>分片索引（分片上传时使用）</td>
+        </tr>
+        <tr>
+            <td>total_chunks</td>
+            <td>integer</td>
+            <td>否</td>
+            <td>总分片数（分片上传时使用）</td>
+        </tr>
+        <tr>
+            <td>file_hash</td>
+            <td>string</td>
+            <td>否</td>
+            <td>文件 MD5 哈希值（可选）</td>
+        </tr>
+    </tbody>
+</table>
+<p><strong>请求示例</strong>:</p>
+<pre style=""><ol><li><code><span>curl </span><span>-</span><span>X POST </span><span>"http://localhost:8080/api/v1/tasks/upload?task_type=ramgeo"</span><span> \</span></code></li><li><code><span>  </span><span>-</span><span>F </span><span>"file=@input_file.in"</span></code></li></ol></pre>
+<p><strong>响应示例</strong>:</p>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"task_id"</span><span>:</span><span> </span><span>"task-1767414007-8eaebe5e"</span><span>,</span></code></li><li><code><span>  </span><span>"status"</span><span>:</span><span> </span><span>"pending"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<p><strong>字段说明</strong>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>字段名</th>
+            <th>类型</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>task_id</td>
+            <td>string</td>
+            <td>任务唯一标识符</td>
+        </tr>
+        <tr>
+            <td>status</td>
+            <td>string</td>
+            <td>任务状态</td>
+        </tr>
+    </tbody>
+</table>
+<p><strong>分片上传响应示例</strong>:</p>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"task_id"</span><span>:</span><span> </span><span>"task-1767414007-8eaebe5e"</span><span>,</span></code></li><li><code><span>  </span><span>"chunk_index"</span><span>:</span><span> </span><span>0</span><span>,</span></code></li><li><code><span>  </span><span>"status"</span><span>:</span><span> </span><span>"chunk_received"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<p><strong>错误响应</strong>:</p>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"detail"</span><span>:</span><span> </span><span>"Failed to upload task file: error message"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<h3><a name="4.2 获取任务列表"></a><span></span>4.2 获取任务列表</h3>
+<p>获取任务列表，支持按状态和优先级过滤。</p>
+<p><strong>Endpoint</strong>: <code>GET /api/v1/tasks</code></p>
+<p><strong>查询参数</strong>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>参数名</th>
+            <th>类型</th>
+            <th>必选</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>status</td>
+            <td>string</td>
+            <td>否</td>
+            <td>按任务状态过滤（PENDING/RUNNING/COMPLETED/FAILED/CANCELLED）</td>
+        </tr>
+        <tr>
+            <td>priority</td>
+            <td>string</td>
+            <td>否</td>
+            <td>按任务优先级过滤（LOW/NORMAL/HIGH/URGENT）</td>
+        </tr>
+        <tr>
+            <td>limit</td>
+            <td>integer</td>
+            <td>否</td>
+            <td>最大返回数量（默认100，范围1-1000）</td>
+        </tr>
+        <tr>
+            <td>offset</td>
+            <td>integer</td>
+            <td>否</td>
+            <td>分页偏移量（默认0）</td>
+        </tr>
+    </tbody>
+</table>
+<p><strong>请求示例</strong>:</p>
+<pre style=""><ol><li><code><span>curl </span><span>-</span><span>X GET </span><span>"http://localhost:8080/api/v1/tasks?status=COMPLETED&amp;limit=10&amp;offset=0"</span></code></li></ol></pre>
+<p><strong>响应示例</strong>:</p>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"tasks"</span><span>:</span><span> </span><span>[</span></code></li><li><code><span>    </span><span>{</span></code></li><li><code><span>      </span><span>"task_id"</span><span>:</span><span> </span><span>"task-1767414007-8eaebe5e"</span><span>,</span></code></li><li><code><span>      </span><span>"status"</span><span>:</span><span> </span><span>"COMPLETED"</span><span>,</span></code></li><li><code><span>      </span><span>"assigned_node_id"</span><span>:</span><span> </span><span>"node-001"</span><span>,</span></code></li><li><code><span>      </span><span>"created_at"</span><span>:</span><span> </span><span>"2023-01-01T12:00:00Z"</span><span>,</span></code></li><li><code><span>      </span><span>"started_at"</span><span>:</span><span> </span><span>"2023-01-01T12:00:01Z"</span><span>,</span></code></li><li><code><span>      </span><span>"completed_at"</span><span>:</span><span> </span><span>"2023-01-01T12:00:30Z"</span><span>,</span></code></li><li><code><span>      </span><span>"error"</span><span>:</span><span> </span><span>null</span><span>,</span></code></li><li><code><span>      </span><span>"retry_count"</span><span>:</span><span> </span><span>0</span><span>,</span></code></li><li><code><span>      </span><span>"file_uploaded"</span><span>:</span><span> </span><span>true</span></code></li><li><code><span>    </span><span>}</span></code></li><li><code><span>  </span><span>],</span></code></li><li><code><span>  </span><span>"total"</span><span>:</span><span> </span><span>1</span><span>,</span></code></li><li><code><span>  </span><span>"limit"</span><span>:</span><span> </span><span>10</span><span>,</span></code></li><li><code><span>  </span><span>"offset"</span><span>:</span><span> </span><span>0</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<p><strong>字段说明</strong>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>字段名</th>
+            <th>类型</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>tasks</td>
+            <td>array</td>
+            <td>任务信息数组</td>
+        </tr>
+        <tr>
+            <td>total</td>
+            <td>integer</td>
+            <td>符合条件的任务总数</td>
+        </tr>
+        <tr>
+            <td>limit</td>
+            <td>integer</td>
+            <td>返回的最大任务数</td>
+        </tr>
+        <tr>
+            <td>offset</td>
+            <td>integer</td>
+            <td>分页偏移量</td>
+        </tr>
+    </tbody>
+</table>
+<p><strong>任务信息字段说明</strong>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>字段名</th>
+            <th>类型</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>task_id</td>
+            <td>string</td>
+            <td>任务唯一标识符</td>
+        </tr>
+        <tr>
+            <td>status</td>
+            <td>string</td>
+            <td>任务状态（PENDING/RUNNING/COMPLETED/FAILED/CANCELLED）</td>
+        </tr>
+        <tr>
+            <td>assigned_node_id</td>
+            <td>string</td>
+            <td>分配的节点 ID（未分配时为 null）</td>
+        </tr>
+        <tr>
+            <td>created_at</td>
+            <td>string</td>
+            <td>任务创建时间（ISO 8601格式）</td>
+        </tr>
+        <tr>
+            <td>started_at</td>
+            <td>string</td>
+            <td>任务开始时间（ISO 8601格式，未开始时为 null）</td>
+        </tr>
+        <tr>
+            <td>completed_at</td>
+            <td>string</td>
+            <td>任务完成时间（ISO 8601格式，未完成时为 null）</td>
+        </tr>
+        <tr>
+            <td>error</td>
+            <td>string</td>
+            <td>错误信息（无错误时为 null）</td>
+        </tr>
+        <tr>
+            <td>retry_count</td>
+            <td>integer</td>
+            <td>重试次数</td>
+        </tr>
+        <tr>
+            <td>file_uploaded</td>
+            <td>boolean</td>
+            <td>文件是否已上传</td>
+        </tr>
+    </tbody>
+</table>
+<h3><a name="4.3 获取单个任务信息"></a><span></span>4.3 获取单个任务信息</h3>
+<p>获取指定任务的详细信息。</p>
+<p><strong>Endpoint</strong>: <code>GET /api/v1/tasks/{task_id}</code></p>
+<p><strong>路径参数</strong>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>参数名</th>
+            <th>类型</th>
+            <th>必选</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>task_id</td>
+            <td>string</td>
+            <td>是</td>
+            <td>任务唯一标识符</td>
+        </tr>
+    </tbody>
+</table>
+<p><strong>响应示例</strong>:</p>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"task_id"</span><span>:</span><span> </span><span>"task-1767414007-8eaebe5e"</span><span>,</span></code></li><li><code><span>  </span><span>"status"</span><span>:</span><span> </span><span>"COMPLETED"</span><span>,</span></code></li><li><code><span>  </span><span>"assigned_node_id"</span><span>:</span><span> </span><span>"node-001"</span><span>,</span></code></li><li><code><span>  </span><span>"created_at"</span><span>:</span><span> </span><span>"2023-01-01T12:00:00Z"</span><span>,</span></code></li><li><code><span>  </span><span>"started_at"</span><span>:</span><span> </span><span>"2023-01-01T12:00:01Z"</span><span>,</span></code></li><li><code><span>  </span><span>"completed_at"</span><span>:</span><span> </span><span>"2023-01-01T12:00:30Z"</span><span>,</span></code></li><li><code><span>  </span><span>"error"</span><span>:</span><span> </span><span>null</span><span>,</span></code></li><li><code><span>  </span><span>"retry_count"</span><span>:</span><span> </span><span>0</span><span>,</span></code></li><li><code><span>  </span><span>"file_uploaded"</span><span>:</span><span> </span><span>true</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<p><strong>字段说明</strong>: 同 4.2 任务信息字段说明</p>
+<p><strong>错误响应</strong>:</p>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"detail"</span><span>:</span><span> </span><span>"Task task-1767414007-8eaebe5e not found"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<h3><a name="4.4 取消任务"></a><span></span>4.4 取消任务</h3>
+<p>取消指定的任务。</p>
+<p><strong>Endpoint</strong>: <code>POST /api/v1/tasks/{task_id}/cancel</code></p>
+<p><strong>路径参数</strong>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>参数名</th>
+            <th>类型</th>
+            <th>必选</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>task_id</td>
+            <td>string</td>
+            <td>是</td>
+            <td>任务唯一标识符</td>
+        </tr>
+    </tbody>
+</table>
+<p><strong>响应示例</strong>:</p>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"task_id"</span><span>:</span><span> </span><span>"task-1767414007-8eaebe5e"</span><span>,</span></code></li><li><code><span>  </span><span>"status"</span><span>:</span><span> </span><span>"cancelled"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<p><strong>字段说明</strong>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>字段名</th>
+            <th>类型</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>task_id</td>
+            <td>string</td>
+            <td>任务唯一标识符</td>
+        </tr>
+        <tr>
+            <td>status</td>
+            <td>string</td>
+            <td>任务状态</td>
+        </tr>
+    </tbody>
+</table>
+<p><strong>错误响应</strong>:</p>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"detail"</span><span>:</span><span> </span><span>"Task task-1767414007-8eaebe5e not found"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"detail"</span><span>:</span><span> </span><span>"Cannot cancel task in COMPLETED status"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<h2><a name="5. 文件下载接口"></a><span></span>5. 文件下载接口</h2>
+<h3><a name="5.1 下载任务结果文件（.line）"></a><span></span>5.1 下载任务结果文件（.line）</h3>
+<p>下载指定任务的 .line 结果文件。</p>
+<p><strong>Endpoint</strong>: <code>GET /api/v1/tasks/files/{task_id}.line</code></p>
+<p><strong>路径参数</strong>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>参数名</th>
+            <th>类型</th>
+            <th>必选</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>task_id</td>
+            <td>string</td>
+            <td>是</td>
+            <td>任务唯一标识符</td>
+        </tr>
+    </tbody>
+</table>
+<p><strong>响应</strong>: 文件内容（application/octet-stream）</p>
+<p><strong>错误响应</strong>:</p>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"detail"</span><span>:</span><span> </span><span>"Task task-1767414007-8eaebe5e not found"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"detail"</span><span>:</span><span> </span><span>"Task task-1767414007-8eaebe5e is not completed (current status: RUNNING)"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"detail"</span><span>:</span><span> </span><span>"Line file not found for task task-1767414007-8eaebe5e"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<h3><a name="5.2 下载任务结果文件（.grid）"></a><span></span>5.2 下载任务结果文件（.grid）</h3>
+<p>下载指定任务的 .grid 结果文件。</p>
+<p><strong>Endpoint</strong>: <code>GET /api/v1/tasks/files/{task_id}.grid</code></p>
+<p><strong>路径参数</strong>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>参数名</th>
+            <th>类型</th>
+            <th>必选</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>task_id</td>
+            <td>string</td>
+            <td>是</td>
+            <td>任务唯一标识符</td>
+        </tr>
+    </tbody>
+</table>
+<p><strong>响应</strong>: 文件内容（application/octet-stream）</p>
+<p><strong>错误响应</strong>: 同 5.1</p>
+<h2><a name="6. 错误处理"></a><span></span>6. 错误处理</h2>
+<h3><a name="6.1 通用错误响应"></a><span></span>6.1 通用错误响应</h3>
+<p>所有错误响应都遵循以下格式：</p>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"detail"</span><span>:</span><span> </span><span>"Error message"</span><span>,</span></code></li><li><code><span>  </span><span>"timestamp"</span><span>:</span><span> </span><span>"2023-01-01T12:00:00Z"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<h3><a name="6.2 常见错误码"></a><span></span>6.2 常见错误码</h3>
+<table>
+    <thead>
+        <tr>
+            <th>HTTP 状态码</th>
+            <th>错误描述</th>
+            <th>处理建议</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>400</td>
+            <td>Bad Request</td>
+            <td>检查请求参数是否正确</td>
+        </tr>
+        <tr>
+            <td>404</td>
+            <td>Not Found</td>
+            <td>检查资源 ID 是否正确</td>
+        </tr>
+        <tr>
+            <td>500</td>
+            <td>Internal Server Error</td>
+            <td>联系系统管理员</td>
+        </tr>
+    </tbody>
+</table>
+<h3><a name="6.3 业务错误"></a><span></span>6.3 业务错误</h3>
+<table>
+    <thead>
+        <tr>
+            <th>错误信息</th>
+            <th>描述</th>
+            <th>处理建议</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Node {node_id} not found</td>
+            <td>节点不存在</td>
+            <td>检查节点 ID 是否正确</td>
+        </tr>
+        <tr>
+            <td>Task {task_id} not found</td>
+            <td>任务不存在</td>
+            <td>检查任务 ID 是否正确</td>
+        </tr>
+        <tr>
+            <td>Cannot cancel task in {status} status</td>
+            <td>无法取消已完成的任务</td>
+            <td>只能取消 PENDING 或 RUNNING 状态的任务</td>
+        </tr>
+        <tr>
+            <td>Task {task_id} is not completed</td>
+            <td>任务未完成</td>
+            <td>等待任务完成后再下载结果文件</td>
+        </tr>
+        <tr>
+            <td>Line file not found for task {task_id}</td>
+            <td>结果文件不存在</td>
+            <td>检查任务是否正确生成结果文件</td>
+        </tr>
+    </tbody>
+</table>
+<h2><a name="7. 使用示例"></a><span></span>7. 使用示例</h2>
+<h3><a name="7.1 完整任务处理流程"></a><span></span>7.1 完整任务处理流程</h3>
+<h4><a name="步骤 1: 上传任务文件"></a><span></span>步骤 1: 上传任务文件</h4>
+<pre style=""><ol><li><code><span>curl </span><span>-</span><span>X POST </span><span>"http://localhost:8080/api/v1/tasks/upload?task_type=ramgeo"</span><span> \</span></code></li><li><code><span>  </span><span>-</span><span>F </span><span>"file=@input_file.in"</span></code></li></ol></pre>
+<p>响应:</p>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"task_id"</span><span>:</span><span> </span><span>"task-1767414007-8eaebe5e"</span><span>,</span></code></li><li><code><span>  </span><span>"status"</span><span>:</span><span> </span><span>"pending"</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<h4><a name="步骤 2: 查询任务状态"></a><span></span>步骤 2: 查询任务状态</h4>
+<pre style=""><ol><li><code><span>curl </span><span>-</span><span>X GET </span><span>"http://localhost:8080/api/v1/tasks/task-1767414007-8eaebe5e"</span></code></li></ol></pre>
+<p>响应:</p>
+<pre style=""><ol><li><code><span>{</span></code></li><li><code><span>  </span><span>"task_id"</span><span>:</span><span> </span><span>"task-1767414007-8eaebe5e"</span><span>,</span></code></li><li><code><span>  </span><span>"status"</span><span>:</span><span> </span><span>"RUNNING"</span><span>,</span></code></li><li><code><span>  </span><span>"assigned_node_id"</span><span>:</span><span> </span><span>"node-001"</span><span>,</span></code></li><li><code><span>  </span><span>"created_at"</span><span>:</span><span> </span><span>"2023-01-01T12:00:00Z"</span><span>,</span></code></li><li><code><span>  </span><span>"started_at"</span><span>:</span><span> </span><span>"2023-01-01T12:00:01Z"</span><span>,</span></code></li><li><code><span>  </span><span>"completed_at"</span><span>:</span><span> </span><span>null</span><span>,</span></code></li><li><code><span>  </span><span>"error"</span><span>:</span><span> </span><span>null</span><span>,</span></code></li><li><code><span>  </span><span>"retry_count"</span><span>:</span><span> </span><span>0</span><span>,</span></code></li><li><code><span>  </span><span>"file_uploaded"</span><span>:</span><span> </span><span>true</span></code></li><li><code><span>}</span></code></li></ol></pre>
+<h4><a name="步骤 3: 下载结果文件"></a><span></span>步骤 3: 下载结果文件</h4>
+<pre style=""><ol><li><code><span>curl </span><span>-</span><span>X GET </span><span>"http://localhost:8080/api/v1/tasks/files/task-1767414007-8eaebe5e.grid"</span><span> \</span></code></li><li><code><span>  </span><span>-</span><span>o output</span><span>.</span><span>grid</span></code></li><li><code></code></li><li><code><span>curl </span><span>-</span><span>X GET </span><span>"http://localhost:8080/api/v1/tasks/files/task-1767414007-8eaebe5e.line"</span><span> \</span></code></li><li><code><span>  </span><span>-</span><span>o output</span><span>.</span><span>line</span></code></li></ol></pre>
+<h3><a name="7.2 节点管理示例"></a><span></span>7.2 节点管理示例</h3>
+<h4><a name="获取所有节点"></a><span></span>获取所有节点</h4>
+<pre style=""><ol><li><code><span>curl </span><span>-</span><span>X GET </span><span>"http://localhost:8080/api/v1/nodes"</span></code></li></ol></pre>
+<h4><a name="排空节点"></a><span></span>排空节点</h4>
+<pre style=""><ol><li><code><span>curl </span><span>-</span><span>X POST </span><span>"http://localhost:8080/api/v1/nodes/node-001/drain"</span></code></li></ol></pre>
+<h4><a name="激活节点"></a><span></span>激活节点</h4>
+<pre style=""><ol><li><code><span>curl </span><span>-</span><span>X POST </span><span>"http://localhost:8080/api/v1/nodes/node-001/activate"</span></code></li></ol></pre>
+<h3><a name="7.3 任务查询示例"></a><span></span>7.3 任务查询示例</h3>
+<h4><a name="获取所有已完成的任务"></a><span></span>获取所有已完成的任务</h4>
+<pre style=""><ol><li><code><span>curl </span><span>-</span><span>X GET </span><span>"http://localhost:8080/api/v1/tasks?status=COMPLETED"</span></code></li></ol></pre>
+<h4><a name="获取前 10 个任务"></a><span></span>获取前 10 个任务</h4>
+<pre style=""><ol><li><code><span>curl </span><span>-</span><span>X GET </span><span>"http://localhost:8080/api/v1/tasks?limit=10&amp;offset=0"</span></code></li></ol></pre>
+<h2><a name="8. 附录"></a><span></span>8. 附录</h2>
+<h3><a name="8.1 任务状态说明"></a><span></span>8.1 任务状态说明</h3>
+<table>
+    <thead>
+        <tr>
+            <th>状态值</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>PENDING</td>
+            <td>任务等待分配</td>
+        </tr>
+        <tr>
+            <td>RUNNING</td>
+            <td>任务正在执行</td>
+        </tr>
+        <tr>
+            <td>COMPLETED</td>
+            <td>任务执行完成</td>
+        </tr>
+        <tr>
+            <td>FAILED</td>
+            <td>任务执行失败</td>
+        </tr>
+        <tr>
+            <td>CANCELLED</td>
+            <td>任务已取消</td>
+        </tr>
+    </tbody>
+</table>
+<h3><a name="8.2 节点状态说明"></a><span></span>8.2 节点状态说明</h3>
+<table>
+    <thead>
+        <tr>
+            <th>状态值</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>UNKNOWN</td>
+            <td>未知状态</td>
+        </tr>
+        <tr>
+            <td>CONNECTING</td>
+            <td>正在连接</td>
+        </tr>
+        <tr>
+            <td>CONNECTED</td>
+            <td>已连接但未认证</td>
+        </tr>
+        <tr>
+            <td>HEALTHY</td>
+            <td>健康状态</td>
+        </tr>
+        <tr>
+            <td>UNHEALTHY</td>
+            <td>不健康状态（心跳超时或任务失败）</td>
+        </tr>
+        <tr>
+            <td>BUSY</td>
+            <td>节点忙碌</td>
+        </tr>
+        <tr>
+            <td>IDLE</td>
+            <td>节点空闲</td>
+        </tr>
+        <tr>
+            <td>OFFLINE</td>
+            <td>节点离线</td>
+        </tr>
+        <tr>
+            <td>DRAINING</td>
+            <td>节点正在排空（不再接收新任务）</td>
+        </tr>
+    </tbody>
+</table>
+<h3><a name="8.3 任务优先级说明"></a><span></span>8.3 任务优先级说明</h3>
+<table>
+    <thead>
+        <tr>
+            <th>优先级值</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>LOW</td>
+            <td>低优先级</td>
+        </tr>
+        <tr>
+            <td>NORMAL</td>
+            <td>普通优先级</td>
+        </tr>
+        <tr>
+            <td>HIGH</td>
+            <td>高优先级</td>
+        </tr>
+        <tr>
+            <td>URGENT</td>
+            <td>紧急优先级</td>
+        </tr>
+    </tbody>
+</table>
+<h3><a name="8.4 支持的任务类型"></a><span></span>8.4 支持的任务类型</h3>
+<table>
+    <thead>
+        <tr>
+            <th>任务类型</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>ramgeo</td>
+            <td>RAMGEO 计算任务</td>
+        </tr>
+    </tbody>
+</table>
+<h3><a name="8.5 时间戳格式"></a><span></span>8.5 时间戳格式</h3>
+<p>所有时间戳均采用 ISO 8601 格式，例如：</p>
+<pre style=""><ol><li><code><span>2023</span><span>-</span><span>01</span><span>-</span><span>01T12</span><span>:</span><span>00</span><span>:</span><span>00Z</span></code></li></ol></pre>
+<p>其中：</p>
+<ul>
+    <li><code>2023-01-01</code>: 日期（年-月-日）</li>
+    <li><code>T</code>: 日期和时间的分隔符</li>
+    <li><code>12:00:00</code>: 时间（时:分:秒）</li>
+    <li><code>Z</code>: UTC 时区标识符</li>
+</ul>
+<h3><a name="8.6 文件大小限制"></a><span></span>8.6 文件大小限制</h3>
+<ul>
+    <li>单个文件最大大小: 100MB</li>
+    <li>分片大小: 1MB</li>
+    <li>支持分片上传大文件</li>
+</ul>
+<h3><a name="8.7 并发限制"></a><span></span>8.7 并发限制</h3>
+<ul>
+    <li>最大并发连接数: 1000</li>
+    <li>最大并发任务数: 100</li>
+</ul>
+<h3><a name="8.8 性能指标"></a><span></span>8.8 性能指标</h3>
+<ul>
+    <li>API 响应时间: &lt; 100ms</li>
+    <li>文件传输速度: &gt; 10MB/s</li>
+    <li>任务处理吞吐量: &gt; 100 任务/分钟</li>
+</ul>
+<h2><a name="9 Mallab 调用说明"></a><span></span>9 Mallab 调用说明</h2>
+<ul>
+    <li><strong>原始调用</strong>: 修改直接在Mallab中调用<code>ramgeo.exe</code>。</li>
+    <li><strong>通过API调用</strong>: 通过REST API上传任务文件，查询任务状态，下载结果文件。</li>
+</ul>
+<h3><a name="9.1 定义函数"></a><span></span>9.1 定义函数</h3>
+<pre style=""><ol><li><code><span>%</span><span> </span><span>主函数：通过</span><span>API</span><span>处理多个任务</span></code></li><li><code><span>function</span><span> processTasksWithAPI</span><span>(</span><span>NA</span><span>,</span><span> nam</span><span>)</span></code></li><li><code><span>    </span><span>%</span><span> API</span><span>服务器地址</span></code></li><li><code><span>    api_base_url </span><span>=</span><span> </span><span>'http://192.168.84.251:8080/api/v1'</span><span>;</span></code></li><li><code></code></li><li><code><span>    </span><span>%</span><span> </span><span>遍历所有任务</span></code></li><li><code><span>    parfor n </span><span>=</span><span> </span><span>1</span><span>:</span><span>NA</span></code></li><li><code><span>        </span><span>%</span><span> </span><span>获取当前目录路径</span></code></li><li><code><span>        current_dir </span><span>=</span><span> fullfile</span><span>(</span><span>'.'</span><span>,</span><span> </span><span>'TLtemp'</span><span>,</span><span> </span><span>[</span><span>'tltemp'</span><span> num2str</span><span>(</span><span>n</span><span>,</span><span> </span><span>'%03d'</span><span>)]);</span></code></li><li><code></code></li><li><code><span>        </span><span>%</span><span> </span><span>切换到当前任务目录</span></code></li><li><code><span>        cd</span><span>(</span><span>current_dir</span><span>);</span></code></li><li><code></code></li><li><code><span>        </span><span>try</span></code></li><li><code><span>            </span><span>%</span><span> </span><span>1.</span><span> </span><span>上传任务文件到</span><span>API</span><span>服务器</span></code></li><li><code><span>            task_id </span><span>=</span><span> uploadTaskFile</span><span>(</span><span>api_base_url</span><span>,</span><span> current_dir</span><span>);</span></code></li><li><code></code></li><li><code><span>            </span><span>if</span><span> </span><span>~</span><span>isempty</span><span>(</span><span>task_id</span><span>)</span></code></li><li><code><span>                </span><span>%</span><span> </span><span>2.</span><span> </span><span>轮询任务状态，直到完成</span></code></li><li><code><span>                task_completed </span><span>=</span><span> pollTaskStatus</span><span>(</span><span>api_base_url</span><span>,</span><span> task_id</span><span>);</span></code></li><li><code></code></li><li><code><span>                </span><span>if</span><span> task_completed</span></code></li><li><code><span>                    </span><span>%</span><span> </span><span>3.</span><span> </span><span>下载结果文件</span></code></li><li><code><span>                    downloadResultFiles</span><span>(</span><span>api_base_url</span><span>,</span><span> task_id</span><span>,</span><span> current_dir</span><span>);</span></code></li><li><code><span>                </span><span>else</span></code></li><li><code><span>                    warning</span><span>(</span><span>'任务 %s 未成功完成'</span><span>,</span><span> task_id</span><span>);</span></code></li><li><code><span>                </span><span>end</span></code></li><li><code><span>            </span><span>else</span></code></li><li><code><span>                warning</span><span>(</span><span>'任务 %d 上传失败'</span><span>,</span><span> n</span><span>);</span></code></li><li><code><span>            </span><span>end</span></code></li><li><code><span>        </span><span>catch</span><span> ME</span></code></li><li><code><span>            warning</span><span>(</span><span>'处理任务 %d 时出错: %s'</span><span>,</span><span> n</span><span>,</span><span> ME</span><span>.</span><span>message</span><span>);</span></code></li><li><code><span>        </span><span>end</span></code></li><li><code></code></li><li><code><span>        </span><span>%</span><span> </span><span>返回到原始目录</span></code></li><li><code><span>        cd</span><span>(</span><span>nam</span><span>);</span></code></li><li><code><span>    </span><span>end</span></code></li><li><code><span>end</span></code></li><li><code></code></li><li><code><span>%</span><span> </span><span>函数</span><span>1</span><span>：上传任务文件</span></code></li><li><code><span>function</span><span> task_id </span><span>=</span><span> uploadTaskFile</span><span>(</span><span>api_base_url</span><span>,</span><span> current_dir</span><span>)</span></code></li><li><code><span>    task_id </span><span>=</span><span> </span><span>''</span><span>;</span></code></li><li><code></code></li><li><code><span>    </span><span>%</span><span> </span><span>检查</span><span>ramgeo</span><span>.</span><span>in</span><span>文件是否存在</span></code></li><li><code><span>    ramgeo_file </span><span>=</span><span> fullfile</span><span>(</span><span>current_dir</span><span>,</span><span> </span><span>'ramgeo.in'</span><span>);</span></code></li><li><code><span>    </span><span>if</span><span> </span><span>~</span><span>exist</span><span>(</span><span>ramgeo_file</span><span>,</span><span> </span><span>'file'</span><span>)</span></code></li><li><code><span>        warning</span><span>(</span><span>'文件不存在: %s'</span><span>,</span><span> ramgeo_file</span><span>);</span></code></li><li><code><span>        </span><span>return</span><span>;</span></code></li><li><code><span>    </span><span>end</span></code></li><li><code></code></li><li><code><span>    </span><span>%</span><span> </span><span>构建上传</span><span>URL</span></code></li><li><code><span>    upload_url </span><span>=</span><span> </span><span>[</span><span>api_base_url </span><span>'/tasks/upload'</span><span>];</span></code></li><li><code></code></li><li><code><span>    </span><span>%</span><span> </span><span>准备</span><span>HTTP</span><span>请求选项</span></code></li><li><code><span>    options </span><span>=</span><span> weboptions</span><span>(</span><span>'RequestMethod'</span><span>,</span><span> </span><span>'POST'</span><span>,</span><span> </span><span>...</span></code></li><li><code><span>                         </span><span>'MediaType'</span><span>,</span><span> </span><span>'multipart/form-data'</span><span>,</span><span> </span><span>...</span></code></li><li><code><span>                         </span><span>'Timeout'</span><span>,</span><span> </span><span>30</span><span>,</span><span> </span><span>...</span></code></li><li><code><span>                         </span><span>'ContentType'</span><span>,</span><span> </span><span>'json'</span><span>);</span></code></li><li><code></code></li><li><code><span>    </span><span>try</span></code></li><li><code><span>        </span><span>%</span><span> </span><span>上传文件</span></code></li><li><code><span>        response </span><span>=</span><span> webwrite</span><span>(</span><span>upload_url</span><span>,</span><span> options</span><span>,</span><span> </span><span>'file'</span><span>,</span><span> ramgeo_file</span><span>);</span></code></li><li><code></code></li><li><code><span>        </span><span>%</span><span> </span><span>提取任务</span><span>ID</span></code></li><li><code><span>        </span><span>if</span><span> isfield</span><span>(</span><span>response</span><span>,</span><span> </span><span>'task_id'</span><span>)</span></code></li><li><code><span>            task_id </span><span>=</span><span> response</span><span>.</span><span>task_id</span><span>;</span></code></li><li><code><span>            fprintf</span><span>(</span><span>'任务上传成功: %s\n'</span><span>,</span><span> task_id</span><span>);</span></code></li><li><code><span>        </span><span>end</span></code></li><li><code><span>    </span><span>catch</span><span> ME</span></code></li><li><code><span>        warning</span><span>(</span><span>'上传文件失败: %s'</span><span>,</span><span> ME</span><span>.</span><span>message</span><span>);</span></code></li><li><code><span>    </span><span>end</span></code></li><li><code><span>end</span></code></li><li><code></code></li><li><code><span>%</span><span> </span><span>函数</span><span>2</span><span>：轮询任务状态</span></code></li><li><code><span>function</span><span> task_completed </span><span>=</span><span> pollTaskStatus</span><span>(</span><span>api_base_url</span><span>,</span><span> task_id</span><span>)</span></code></li><li><code><span>    task_completed </span><span>=</span><span> </span><span>false</span><span>;</span></code></li><li><code><span>    max_attempts </span><span>=</span><span> </span><span>360000</span><span>;</span><span> </span><span>%</span><span> </span><span>最多轮询</span><span>100</span><span>小时（</span><span>5</span><span>秒间隔）</span></code></li><li><code><span>    poll_interval </span><span>=</span><span> </span><span>5</span><span>;</span><span> </span><span>%</span><span> </span><span>5</span><span>秒</span></code></li><li><code></code></li><li><code><span>    </span><span>%</span><span> </span><span>构建状态查询</span><span>URL</span></code></li><li><code><span>    status_url </span><span>=</span><span> </span><span>[</span><span>api_base_url </span><span>'/tasks/'</span><span> task_id</span><span>];</span></code></li><li><code></code></li><li><code><span>    </span><span>for</span><span> attempt </span><span>=</span><span> </span><span>1</span><span>:</span><span>max_attempts</span></code></li><li><code><span>        </span><span>try</span></code></li><li><code><span>            </span><span>%</span><span> </span><span>获取任务状态</span></code></li><li><code><span>            options </span><span>=</span><span> weboptions</span><span>(</span><span>'Timeout'</span><span>,</span><span> </span><span>10</span><span>,</span><span> </span><span>'ContentType'</span><span>,</span><span> </span><span>'json'</span><span>);</span></code></li><li><code><span>            response </span><span>=</span><span> webread</span><span>(</span><span>status_url</span><span>,</span><span> options</span><span>);</span></code></li><li><code></code></li><li><code><span>            </span><span>%</span><span> </span><span>检查状态字段</span></code></li><li><code><span>            </span><span>if</span><span> isfield</span><span>(</span><span>response</span><span>,</span><span> </span><span>'status'</span><span>)</span></code></li><li><code><span>                status </span><span>=</span><span> upper</span><span>(</span><span>response</span><span>.</span><span>status</span><span>);</span></code></li><li><code></code></li><li><code><span>                fprintf</span><span>(</span><span>'任务 %s 状态: %s (尝试 %d)\n'</span><span>,</span><span> task_id</span><span>,</span><span> status</span><span>,</span><span> attempt</span><span>);</span></code></li><li><code></code></li><li><code><span>                </span><span>%</span><span> </span><span>检查任务是否完成</span></code></li><li><code><span>                </span><span>if</span><span> strcmp</span><span>(</span><span>status</span><span>,</span><span> </span><span>'COMPLETED'</span><span>)</span></code></li><li><code><span>                    task_completed </span><span>=</span><span> </span><span>true</span><span>;</span></code></li><li><code><span>                    fprintf</span><span>(</span><span>'任务 %s 已完成\n'</span><span>,</span><span> task_id</span><span>);</span></code></li><li><code><span>                    </span><span>return</span><span>;</span></code></li><li><code></code></li><li><code><span>                elseif strcmp</span><span>(</span><span>status</span><span>,</span><span> </span><span>'FAILED'</span><span>)</span></code></li><li><code><span>                    error_msg </span><span>=</span><span> </span><span>'未知错误'</span><span>;</span></code></li><li><code><span>                    </span><span>if</span><span> isfield</span><span>(</span><span>response</span><span>,</span><span> </span><span>'error'</span><span>)</span><span> </span><span>&amp;&amp;</span><span> </span><span>~</span><span>isempty</span><span>(</span><span>response</span><span>.</span><span>error</span><span>)</span></code></li><li><code><span>                        error_msg </span><span>=</span><span> response</span><span>.</span><span>error</span><span>;</span></code></li><li><code><span>                    </span><span>end</span></code></li><li><code><span>                    warning</span><span>(</span><span>'任务 %s 失败: %s'</span><span>,</span><span> task_id</span><span>,</span><span> error_msg</span><span>);</span></code></li><li><code><span>                    </span><span>return</span><span>;</span></code></li><li><code></code></li><li><code><span>                elseif strcmp</span><span>(</span><span>status</span><span>,</span><span> </span><span>'PENDING'</span><span>)</span><span> </span><span>||</span><span> strcmp</span><span>(</span><span>status</span><span>,</span><span> </span><span>'SCHEDULED'</span><span>)</span><span> </span><span>||</span><span> strcmp</span><span>(</span><span>status</span><span>,</span><span> </span><span>'RUNNING'</span><span>)</span></code></li><li><code><span>                    </span><span>%</span><span> </span><span>任务仍在运行，继续等待</span></code></li><li><code><span>                    pause</span><span>(</span><span>poll_interval</span><span>);</span></code></li><li><code></code></li><li><code><span>                </span><span>else</span></code></li><li><code><span>                    warning</span><span>(</span><span>'未知状态: %s'</span><span>,</span><span> status</span><span>);</span></code></li><li><code><span>                    pause</span><span>(</span><span>poll_interval</span><span>);</span></code></li><li><code><span>                </span><span>end</span></code></li><li><code><span>            </span><span>else</span></code></li><li><code><span>                warning</span><span>(</span><span>'响应中没有status字段'</span><span>);</span></code></li><li><code><span>                pause</span><span>(</span><span>poll_interval</span><span>);</span></code></li><li><code><span>            </span><span>end</span><span>            </span></code></li><li><code><span>        </span><span>catch</span><span> ME</span></code></li><li><code><span>            warning</span><span>(</span><span>'获取任务状态失败: %s'</span><span>,</span><span> ME</span><span>.</span><span>message</span><span>);</span></code></li><li><code><span>            pause</span><span>(</span><span>poll_interval</span><span>);</span></code></li><li><code><span>        </span><span>end</span></code></li><li><code><span>    </span><span>end</span><span>    </span></code></li><li><code><span>    warning</span><span>(</span><span>'任务 %s 轮询超时'</span><span>,</span><span> task_id</span><span>);</span></code></li><li><code><span>end</span></code></li><li><code></code></li><li><code><span>%</span><span> </span><span>函数</span><span>3</span><span>：下载结果文件</span></code></li><li><code><span>function</span><span> downloadResultFiles</span><span>(</span><span>api_base_url</span><span>,</span><span> task_id</span><span>,</span><span> current_dir</span><span>)</span></code></li><li><code><span>    </span><span>%</span><span> </span><span>要下载的文件类型</span></code></li><li><code><span>    file_types </span><span>=</span><span> </span><span>{</span><span>'.line'</span><span>,</span><span> </span><span>'.grid'</span><span>};</span></code></li><li><code></code></li><li><code><span>    </span><span>for</span><span> i </span><span>=</span><span> </span><span>1</span><span>:</span><span>length</span><span>(</span><span>file_types</span><span>)</span></code></li><li><code><span>        file_type </span><span>=</span><span> file_types</span><span>{</span><span>i</span><span>};</span></code></li><li><code><span>        filename </span><span>=</span><span> </span><span>[</span><span>task_id file_type</span><span>];</span></code></li><li><code></code></li><li><code><span>        </span><span>%</span><span> </span><span>构建下载</span><span>URL</span></code></li><li><code><span>        download_url </span><span>=</span><span> </span><span>[</span><span>api_base_url </span><span>'/tasks/files/'</span><span> filename</span><span>];</span></code></li><li><code></code></li><li><code><span>        </span><span>%</span><span> </span><span>本地保存路径</span></code></li><li><code><span>        save_path </span><span>=</span><span> fullfile</span><span>(</span><span>current_dir</span><span>,</span><span> filename</span><span>);</span><span>        </span></code></li><li><code><span>        </span><span>try</span></code></li><li><code><span>            </span><span>%</span><span> </span><span>下载文件</span></code></li><li><code><span>            options </span><span>=</span><span> weboptions</span><span>(</span><span>'Timeout'</span><span>,</span><span> </span><span>60</span><span>,</span><span> </span><span>'ContentType'</span><span>,</span><span> </span><span>'binary'</span><span>);</span></code></li><li><code><span>            data </span><span>=</span><span> webread</span><span>(</span><span>download_url</span><span>,</span><span> options</span><span>);</span></code></li><li><code></code></li><li><code><span>            </span><span>%</span><span> </span><span>保存文件</span></code></li><li><code><span>            fid </span><span>=</span><span> fopen</span><span>(</span><span>save_path</span><span>,</span><span> </span><span>'wb'</span><span>);</span></code></li><li><code><span>            </span><span>if</span><span> fid </span><span>~=</span><span> </span><span>-</span><span>1</span></code></li><li><code><span>                fwrite</span><span>(</span><span>fid</span><span>,</span><span> data</span><span>);</span></code></li><li><code><span>                fclose</span><span>(</span><span>fid</span><span>);</span></code></li><li><code><span>                fprintf</span><span>(</span><span>'文件下载成功: %s\n'</span><span>,</span><span> save_path</span><span>);</span></code></li><li><code><span>            </span><span>else</span></code></li><li><code><span>                warning</span><span>(</span><span>'无法创建文件: %s'</span><span>,</span><span> save_path</span><span>);</span></code></li><li><code><span>            </span><span>end</span><span>            </span></code></li><li><code><span>        </span><span>catch</span><span> ME</span></code></li><li><code><span>            warning</span><span>(</span><span>'下载文件 %s 失败: %s'</span><span>,</span><span> filename</span><span>,</span><span> ME</span><span>.</span><span>message</span><span>);</span></code></li><li><code><span>        </span><span>end</span></code></li><li><code><span>    </span><span>end</span></code></li><li><code><span>end</span></code></li><li><code></code></li><li><code><span>%</span><span> </span><span>函数</span><span>4</span><span>：获取</span><span>API</span><span>服务器状态（可选，用于测试连接）</span></code></li><li><code><span>function</span><span> server_status </span><span>=</span><span> checkServerStatus</span><span>(</span><span>api_base_url</span><span>)</span></code></li><li><code><span>    server_status </span><span>=</span><span> </span><span>false</span><span>;</span></code></li><li><code><span>    </span><span>try</span></code></li><li><code><span>        status_url </span><span>=</span><span> </span><span>[</span><span>api_base_url </span><span>'/status'</span><span>];</span></code></li><li><code><span>        options </span><span>=</span><span> weboptions</span><span>(</span><span>'Timeout'</span><span>,</span><span> </span><span>5</span><span>,</span><span> </span><span>'ContentType'</span><span>,</span><span> </span><span>'json'</span><span>);</span></code></li><li><code><span>        response </span><span>=</span><span> webread</span><span>(</span><span>status_url</span><span>,</span><span> options</span><span>);</span></code></li><li><code><span>        </span><span>if</span><span> isfield</span><span>(</span><span>response</span><span>,</span><span> </span><span>'status'</span><span>)</span><span> </span><span>&amp;&amp;</span><span> strcmp</span><span>(</span><span>response</span><span>.</span><span>status</span><span>,</span><span> </span><span>'ok'</span><span>)</span></code></li><li><code><span>            server_status </span><span>=</span><span> </span><span>true</span><span>;</span></code></li><li><code><span>            fprintf</span><span>(</span><span>'API服务器状态正常\n'</span><span>);</span></code></li><li><code><span>        </span><span>end</span></code></li><li><code><span>    </span><span>catch</span><span> ME</span></code></li><li><code><span>        warning</span><span>(</span><span>'无法连接到API服务器: %s'</span><span>,</span><span> ME</span><span>.</span><span>message</span><span>);</span></code></li><li><code><span>    </span><span>end</span></code></li><li><code><span>end</span></code></li><li><code></code></li><li><code><span>%</span><span> </span><span>使用示例（替换原来的代码）：</span></code></li><li><code><span>%</span><span> </span><span>Parfor</span><span> n</span><span>=</span><span>1</span><span>:</span><span>NA</span></code></li><li><code><span>%</span><span>   cd</span><span>([</span><span>'.\TLtemp\tltemp'</span><span> num2str</span><span>(</span><span>n</span><span>,</span><span>'%03d'</span><span>)]);</span></code></li><li><code><span>%</span><span>   processTasksWithAPI</span><span>(</span><span>1</span><span>,</span><span> pwd</span><span>);</span><span> </span><span>%</span><span> </span><span>处理当前目录的任务</span></code></li><li><code><span>%</span><span>   cd </span><span>(</span><span>nam</span><span>)</span></code></li><li><code><span>%</span><span> </span><span>end</span></code></li></ol></pre>
+<h3><a name="9.2 主要功能说明："></a><span></span>9.2 主要功能说明：</h3>
+<ol>
+    <li>
+        <p><strong><code>processTasksWithAPI</code>函数</strong>：</p>
+        <ul>
+            <li>主函数，替换原来的<code>ramgeo.exe</code>调用</li>
+            <li>使用parfor并行处理多个任务</li>
+        </ul>
+    </li>
+    <li>
+        <p><strong><code>uploadTaskFile</code>函数</strong>：</p>
+        <ul>
+            <li>上传ramgeo.in文件到API服务器</li>
+            <li>返回任务ID</li>
+        </ul>
+    </li>
+    <li>
+        <p><strong><code>pollTaskStatus</code>函数</strong>：</p>
+        <ul>
+            <li>每5秒查询任务状态</li>
+            <li>支持任务状态：PENDING, SCHEDULED, RUNNING, COMPLETED, FAILED</li>
+            <li>最多轮询1小时（可根据需要调整）</li>
+        </ul>
+    </li>
+    <li>
+        <p><strong><code>downloadResultFiles</code>函数</strong>：</p>
+        <ul>
+            <li>下载任务结果文件（.line和.grid）</li>
+            <li>保存到当前目录</li>
+        </ul>
+    </li>
+    <li>
+        <p><strong><code>checkServerStatus</code>函数</strong>（可选）：</p>
+        <ul>
+            <li>测试API服务器连接状态</li>
+        </ul>
+    </li>
+</ol>
+<h3><a name="9.3 使用方法："></a><span></span>9.3 使用方法：</h3>
+<p>将原来的代码替换为：</p>
+<pre style=""><ol><li><code><span>%</span><span> </span><span>在使用前可先检查服务器状态</span></code></li><li><code><span>api_base_url </span><span>=</span><span> </span><span>'http://192.168.84.251:8080/api/v1'</span><span>;</span></code></li><li><code><span>if</span><span> checkServerStatus</span><span>(</span><span>api_base_url</span><span>)</span></code></li><li><code><span>    parfor n</span><span>=</span><span>1</span><span>:</span><span>NA</span></code></li><li><code><span>        current_dir </span><span>=</span><span> </span><span>[</span><span>'.\TLtemp\tltemp'</span><span> num2str</span><span>(</span><span>n</span><span>,</span><span>'%03d'</span><span>)];</span></code></li><li><code><span>        cd</span><span>(</span><span>current_dir</span><span>);</span></code></li><li><code><span>        processTasksWithAPI</span><span>(</span><span>1</span><span>,</span><span> current_dir</span><span>);</span><span> </span><span>%</span><span> </span><span>处理当前任务</span></code></li><li><code><span>        cd</span><span>(</span><span>nam</span><span>)</span></code></li><li><code><span>    </span><span>end</span></code></li><li><code><span>else</span></code></li><li><code><span>    error</span><span>(</span><span>'无法连接到API服务器，请检查网络连接和服务器状态'</span><span>);</span></code></li><li><code><span>end</span></code></li></ol></pre>
+<h2><a name="注意事项："></a><span></span>注意事项：</h2>
+<ol>
+    <li>需要MATLAB的HTTP通信工具箱支持</li>
+    <li>根据实际情况调整超时时间和轮询次数</li>
+    <li>确保网络可以访问API服务器（192.168.84.251:8080）</li>
+    <li>错误处理已包含，但可能需要根据实际情况调整</li>
+</ol>
+<p>这个代码提供了完整的API集成功能，可以无缝替换原来的本地执行方式。</p>
+<h2><a name="10. 更新日志"></a><span></span>10. 更新日志</h2>
+<h3><a name="v1.0.0 (2026-01-03)"></a><span></span>v1.0.0 (2026-01-03)</h3>
+<ul>
+    <li>初始版本发布</li>
+    <li>实现基础节点管理接口</li>
+    <li>实现任务管理接口</li>
+    <li>实现文件上传和下载接口</li>
+    <li>支持分片上传大文件</li>
+    <li>支持任务状态查询</li>
+    <li>支持节点排空和激活操作</li>
+</ul>

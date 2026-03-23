@@ -1,0 +1,42 @@
+# 节点服务器配置
+node:
+  # 节点唯一标识符
+  node_id: "node-001"
+  # 节点名称（可选）
+  node_name: "Node Server 001"
+  
+# 代理服务器配置
+proxy:
+  # 代理服务器的 WebSocket 地址
+  proxy_server_url: "ws://192.168.84.251:8765/node-ws"
+
+# 运行配置
+runtime:
+  # 节点状态报告的时间间隔，单位秒
+  report_time: 10
+  # 节点工作目录，用于存储任务文件和结果
+  work_dir: "./work"
+  # 节点日志目录，用于存储运行日志
+  log_dir: "./logs"
+  # 处理任务的执行文件
+  run_bin: "./bin/ramgeo"
+  # 最大并发任务数
+  max_tasks: 52
+  
+# WebSocket 配置
+websocket:
+  # 连接超时时间，单位秒
+  connect_timeout: 10
+  # 重连间隔时间，单位秒
+  reconnect_interval: 5
+  # 最大重连次数
+  max_reconnect_attempts: 10
+  
+# 日志配置
+logging:
+  # 日志级别：DEBUG, INFO, WARNING, ERROR, CRITICAL
+  level: "DEBUG"
+  # 日志文件大小限制，单位MB
+  max_file_size: 10
+  # 日志文件保留数量
+  backup_count: 10

@@ -1,0 +1,35 @@
+# RAMGEO Node Server Configuration
+
+# Security Settings
+security:
+  secret_key: "node-server-secret-key"
+  jwt:
+    expiration: 3600
+    algorithm: "HS256"
+
+# Node Server Settings
+node_server:
+  id: "node-1"
+  name: "Node 1"
+  type: "cpu"
+  max_workers: 4
+  proxy:
+    websocket_uri: "ws://192.168.84.251:8080"
+    api_key: "your-proxy-api-key"
+    heartbeat_interval: 30
+    reconnect_interval: 5
+    max_reconnect_attempts: 10
+  resource_monitor:
+    interval: 10
+    thresholds:
+      cpu: 90
+      memory: 90
+      disk: 90
+
+# Node Settings
+node:
+  work_dir: "./workspace"
+  auth_token: "node-auth-token"
+  max_tasks: 5
+  max_file_size: 100000000
+  health_check_interval: 60

@@ -1,0 +1,111 @@
+# WebSocket Proxy Server Configuration
+
+# Server Settings
+server:
+  host: "0.0.0.0"
+  port: 8765
+  debug: false
+  keepalive_timeout: 300
+
+# API Server Settings
+api:
+  host: "0.0.0.0"
+  port: 8080
+  cors: true
+  cors_origins: ["*"]
+
+# Database Settings
+database:
+  host: "localhost"
+  port: 3306
+  name: "ramgeo"
+  user: "root"
+  password: "Pga39016"
+  pool_size: 10
+  max_overflow: 20
+  timeout: 30
+
+# Redis Settings
+redis:
+  url: "redis://localhost:6379/0"
+  pool_size: 10
+  timeout: 30
+
+# Security Settings
+security:
+  secret_key: "your-secret-key-change-this-in-production"
+  jwt:
+    expiration: 3600
+    algorithm: "HS256"
+  password:
+    algorithm: "bcrypt"
+    rounds: 12
+  api_key:
+    expiration: 31536000  # 1 year
+
+# Node Manager Settings
+node_manager:
+  heartbeat_interval: 30
+  heartbeat_timeout: 60
+  health_check_interval: 60
+  max_failures: 3
+  task_retry_count: 3
+  task_retry_delay: 5
+
+# Task Manager Settings
+task_manager:
+  queue_size: 1000
+  max_scheduled_tasks: 10
+  task_timeout: 3600
+  stats_update_interval: 60
+
+# File Manager Settings
+file_manager:
+  upload_dir: "./uploads"
+  temp_dir: "./temp"
+  max_file_size: 5368709120  # 5GB
+  allowed_extensions: [".tif", ".tiff", ".png", ".jpg", ".jpeg", ".zip", ".tar", ".gz"]
+  temp_file_expiration: 86400  # 1 day
+  cleanup_interval: 3600
+
+# Logging Settings
+logging:
+  level: "INFO"
+  file: "app.log"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  rotate:
+    enabled: true
+    max_size: 10485760  # 10MB
+    backup_count: 5
+
+# Metrics Settings
+metrics:
+  enabled: true
+  port: 9090
+  prefix: "ramgeo_"
+  update_interval: 10
+
+# Node Server Settings
+node_server:
+  id: "node-1"
+  name: "Node 1"
+  type: "cpu"
+  max_workers: 4
+  proxy:
+    websocket_uri: "ws://192.168.84.251:8765"
+    api_key: "your-proxy-api-key"
+    heartbeat_interval: 30
+    reconnect_interval: 5
+    max_reconnect_attempts: 10
+  resource_monitor:
+    interval: 10
+    thresholds:
+      cpu: 90
+      memory: 90
+      disk: 90
+
+# Client Settings
+client:
+  max_connections: 100
+  message_queue_size: 100
+  ping_interval: 30

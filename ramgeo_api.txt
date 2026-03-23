@@ -1,0 +1,20 @@
+开发需求：
+语言：python
+功能描述：
+本系统提供3个api接口，用户上传一个ramgeo.in的文本文件后，程序将生成一个运行目录，并在该目录下运行一个系统的执行程序，该程序会自动读取ramgeo.in名称的文件，运算后会在该目录下生成名为：tl.grid、tl.line 的两个结果文件。系统参数：TOTAL 为能够运行任务的最大数，每次运行进行减一，运行完成加一。用户通过API-2的id可以实时查询该任务是否运行完成。
+
+提供API接口地址：
+API-1、上传文件地址：http://xxx.xxx.xxx.xxx:3000/ramgeo/upload
+API-2、查询运行状态：http://xxx.xxx.xxx.xxx:3000/ramgeo/status?id=
+API-3、查询任务空闲：http://xxx.xxx.xxx.xxx:3000/ramgeo/idel
+
+可配置变量：
+	1、PATH		主运行目录："/home/ramgeo/run"
+	2、FILE		执行文件: "/usr/sbin/ramgeo"
+	3、TOTAL	 	运行总数：20
+
+具体功能说明：
+1、API-1接收上传文件，在主运行目录下生成当时时间戳命名的目录，同时也是该任务的ID，将上传的文件保存在该目录下名为：ramgeo.in ，在该目录下调用FILE指定的可执行程序 ，运行成功web返回ID，如没有可用任务数则返回0 。注意：通过TOTAL 判断是否还有可用任务数，通过是否执行完成对TOTAL进行增减。
+2、API-2为查询运行状态，通过id变量查询任务ID是否运行完成，如程序运行没有结束，返回0，如果完成，web返回文件下载的地址，格式：http://xxx.xxx.xxx.xxx:3000/ramgeo/[任务ID]/tl.grid,http://xxx.xxx.xxx.xxx:3000/ramgeo/[任务ID]/tl.line
+3、API-3 返回当前可用任务数
+
